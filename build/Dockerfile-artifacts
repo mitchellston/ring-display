@@ -1,0 +1,60 @@
+ARG NODE_VERSION
+FROM registry.gitlab.com/khassel/container/node-prune:latest as prune
+FROM node:${NODE_VERSION}-alpine as builder
+
+WORKDIR /opt/magic_mirror
+
+COPY --from=prune /node-prune /usr/local/bin/node-prune
+COPY build_info.sh /tmp
+
+RUN set -e; \
+    apk add --no-cache git; \
+    chmod +x /tmp/build_info.sh;
+
+ARG GIT_INFO
+ARG BuildRef
+ARG GitRepo
+ARG buildarch
+ARG opt
+ARG dev
+RUN set -e; \
+    node -v; \
+    echo BuildRef="${BuildRef}"; \
+    echo GitRepo="${GitRepo}"; \
+    git clone --depth 1 -b "${BuildRef}" --single-branch "${GitRepo}" .; \
+    git log -1; \
+    npmargs="--no-audit --no-fund --no-update-notifier"; \
+    if [ "${buildarch}" = "arm32v7/" ]; then \
+      npmargs="${npmargs} --arch=armv7l"; \
+    elif [ "${buildarch}" = "arm64v8/" ]; then \
+      npmargs="${npmargs} --arch=arm64"; \
+    fi; \
+    if [ "${opt}" = "on" ]; then \
+      npmargs="${npmargs} --omit=optional"; \
+    fi; \
+    if [ "${dev}" = "dn" ]; then \
+      npmargs="${npmargs} --omit=dev"; \
+    fi; \
+    if [ ! $(echo "${BuildRef}" | grep -E "^v[0-9]+.[0-9]+.[0-9]+$") ]; then \
+      # if not mm-version then delete package-lock.json to get newest dependencies
+      rm -f package-lock.json; \
+    fi; \
+    echo "now executing: npm install ${npmargs}"; \
+    npm install ${npmargs}; \
+    cat package.json; \
+    sed -i "s:address\: \"localhost\":address\: \"0.0.0.0\":" config/config.js.sample; \
+    sed -i "s:ipWhitelist\: \[.*\],:ipWhitelist\: \[\],:" config/config.js.sample; \
+    mkdir mount_ori; \
+    mv modules mount_ori/; \
+    mv config mount_ori/; \
+    mv css mount_ori/; \
+    # remove not needed node_modules stuff
+    [ "${dev}" = "dn" ] && node-prune || echo "no node-prune"; \
+    cp /tmp/build_info.sh .; \
+    ./build_info.sh "Artifacts" "$GIT_INFO"; \
+    rm -f build_info.sh;
+
+FROM scratch
+LABEL maintainer="Karsten Hassel"
+
+COPY --from=builder /opt/magic_mirror /opt/magic_mirror

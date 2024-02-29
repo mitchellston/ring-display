@@ -1,0 +1,103 @@
+stages:
+  - build
+  - test
+
+include:
+  - template: Security/Container-Scanning.gitlab-ci.yml
+  - project: "khassel/container"
+    file: "/.yaml/docker_readme.yaml"
+  - ".gitlab/alpine.yaml"
+  - ".gitlab/artifacts.yaml"
+  - ".gitlab/debian.yaml"
+  - ".gitlab/fedora.yaml"
+  - ".gitlab/test.yaml"
+
+image: ${CI_REGISTRY}/khassel/container/kaniko:latest
+
+variables:
+  GIT_DEPTH: 1
+  MAGICMIRROR_VERSION: "v2.26.0"
+  NODE_VERSION_MASTER: "20"
+  NODE_VERSION_DEVELOP: "21"
+  DEBIAN_VERSION_MASTER: "bookworm"
+  DEBIAN_VERSION_DEVELOP: "bookworm"
+  GitRepo: "https://github.com/MagicMirrorOrg/MagicMirror.git"
+  TOOLBOX_IMG: "${CI_REGISTRY}/khassel/container/toolbox:latest"
+
+.rule:
+  rules:
+  - if: $TASK == "runtime"
+
+.rulenomaster:
+  rules:
+  - if: $TASK == "runtime" && $CI_COMMIT_BRANCH != "master"
+
+.beforescript:
+  before_script:
+    - docker.gitlab.login
+    - |
+      set -e
+      IFS=- read -r imgarch opt dev <<EOF
+      ${imgkey}
+      EOF
+      # needed for kaniko build script and qemu:
+      export imgarch
+      # needed for artifact builds:
+      export opt
+      export dev
+      # set build arch
+      if [ "${imgarch}" = "arm" ]; then
+        export buildarch="arm32v7/"
+      elif [ "${imgarch}" = "arm64" ]; then
+        export buildarch="arm64v8/"
+      elif [ ! "${imgarch}" = "amd64" ]; then
+        echo "unsupported image arch: ${imgarch}"
+        exit 1
+      fi
+      # master or not
+      if [ "${CI_COMMIT_BRANCH}" = "master" ]; then
+        BuilderTag=${MAGICMIRROR_VERSION}
+        [ -z "${NODE_VERSION}" ] && export NODE_VERSION=${NODE_VERSION_MASTER}
+        [ -z "${DEBIAN_VERSION}" ] && export DEBIAN_VERSION=${DEBIAN_VERSION_MASTER}
+      else
+        BuilderTag=${CI_COMMIT_BRANCH}
+        [ -z "${NODE_VERSION}" ] && export NODE_VERSION=${NODE_VERSION_DEVELOP}
+        [ -z "${DEBIAN_VERSION}" ] && export DEBIAN_VERSION=${DEBIAN_VERSION_DEVELOP}
+      fi
+      export BUILDER_IMG="${CI_REGISTRY_IMAGE}:${BuilderTag}_${imgkey}_artifacts"
+      export GIT_INFO="commit=${CI_COMMIT_SHORT_SHA} ref=${CI_COMMIT_REF_NAME} date=${CI_COMMIT_TIMESTAMP} author=${CI_COMMIT_AUTHOR} title=${CI_COMMIT_TITLE}"
+  after_script:
+    - docker.logout
+
+pages:
+  stage: build
+  image: ${CI_REGISTRY}/khassel/jekyll:latest
+  script:
+    - cp -v .gitlab-ci.yml ${CI_PROJECT_DIR}/pages/_data/gitlab.yml
+    - uglify.sh ${CI_PROJECT_DIR}/pages/assets/js
+    - cd pages
+    - cp -v $HOME/Gemfile .
+    - bundle exec jekyll build -d ${CI_PROJECT_DIR}/public
+  artifacts:
+    paths:
+      - public
+  rules:
+  - if: $TASK == "pages"
+  - if: $CI_COMMIT_BRANCH == "master" && $TASK == "runtime"
+  environment:
+    name: "$CI_COMMIT_BRANCH/Documentation"
+    url: https://khassel.gitlab.io/magicmirror/
+
+sync_readme:
+  stage: build
+  needs:
+  - sync_slim
+  - sync_fat
+  - sync_alpine
+  extends: .docker_readme
+  rules:
+  - if: $TASK == "readme"
+  - if: $CI_COMMIT_BRANCH == "master" && $TASK == "runtime"
+  environment:
+    name: "$CI_COMMIT_BRANCH/Docker Readme"
+    url: https://hub.docker.com/r/karsten13/magicmirror

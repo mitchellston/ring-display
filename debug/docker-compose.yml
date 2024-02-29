@@ -1,0 +1,32 @@
+# start with: dc run --rm --name mm --service-ports magicmirror
+version: '3'
+
+services:
+  magicmirror:
+    image: registry.gitlab.com/khassel/magicmirror:develop_debug21
+#    volumes:
+#      - /tmp/.X11-unix:/tmp/.X11-unix
+#      - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
+#    environment:
+#      LD_PRELOAD: /usr/local/lib/libfaketime.so.1
+#      FAKETIME: -1d
+#      DISPLAY: unix:0.0
+    ports:
+      - "8080:8080"
+    stdin_open: true
+    tty: true
+    command:
+      - /bin/bash
+      - -c
+      - |
+        # comment out if needed:
+        #rm -rf ./*
+        #rm -rf ./.*
+        #git clone -b cloneobject https://github.com/khassel/MagicMirror.git .
+        #npm install
+        #mv config/config.js.sample config/config.js
+        #sed -i 's|address:.*|address: "0.0.0.0",|g;s|ipWhitelist:.*|ipWhitelist: [],|g' config/config.js
+        #touch css/custom.css
+        Xvfb :99 -screen 0 1024x768x16 &
+        export DISPLAY=:99
+        /bin/bash

@@ -1,0 +1,33 @@
+resource_rules:
+  issues:
+    rules:
+      - name: find all open issues without activity
+        conditions:
+          date:
+            attribute: updated_at
+            condition: older_than
+            interval_type: days
+            interval: 30
+          state: opened
+          labels:
+            - None
+        actions:
+          labels:
+            - stale
+          comment: |
+            {{author}} No activity since 30 days. The issue will be closed within the next 7 days. If this is undesirable, please leave a comment.
+      - name: close all stale issues
+        conditions:
+          date:
+            attribute: updated_at
+            condition: older_than
+            interval_type: days
+            interval: 6
+          state: opened
+          labels:
+            - stale
+        actions:
+          comment: |
+            {{author}} Closing this due to inactivity.
+            /unlabel
+            /close

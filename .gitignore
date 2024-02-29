@@ -1,0 +1,4 @@
+*.log
+mounts/
+run/docker-compose.yml
+Gemfile*
