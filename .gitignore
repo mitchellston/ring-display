@@ -1,4 +1,12 @@
 *.log
 Gemfile*
+
+# Ignore local files (these are usually config files that contain secrets)
 *.local.*
 !*.example
+
+# Do not add modules to the repository
+mounts/modules/*
+!mounts/modules/default
+!mounts/modules/modules
+!mounts/modules/install.sh
