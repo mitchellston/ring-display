@@ -42,3 +42,10 @@ for module in $(ls $(dirname "$0") | grep -v default | grep -v install.sh | grep
         rm -rf $(dirname "$0")/$module
     fi
 done
+
+# Install all the dependencies
+find "$(dirname "$0")" -iname 'package.json' -not -path '*/node_modules/*' -exec dirname {} \; | while IFS= read -r directory; do
+  echo "Installing dependencies for $directory"
+  (cd "$directory" && npm install > /dev/null)
+  echo "Done installing dependencies for $directory"
+done
