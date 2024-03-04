@@ -47,6 +47,6 @@ done
 find "$(dirname "$0")" -iname 'package.json' -not -path '*/node_modules/*' -exec dirname {} \; | while IFS= read -r directory; do
   npm cache clean --force
   echo "Installing dependencies for $directory"
-  (cd "$directory" && yarn install > /dev/null)
+  (cd "$directory" && yarn install)
   echo "Done installing dependencies for $directory"
 done
