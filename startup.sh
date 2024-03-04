@@ -1,3 +1,5 @@
+$(dirname "$0")/update.sh
+
 # Start docker containers
 (cd "$(dirname "$0")/run" && docker-compose build && docker-compose up -d)
 
