@@ -3,7 +3,7 @@ if [ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]; then
     echo "There are changes on origin"
     git pull
     echo "Pulled the latest changes"
-    (cd "$(dirname "$0")/run" && docker-compose build && docker-compose up -d)
+    (cd "$(dirname "$0")/run" && docker-compose down && docker-compose build && docker-compose up -d)
 fi
 
 # Check if there are any changes in the modules
@@ -38,5 +38,5 @@ done < $(dirname "$0")/mounts/modules/modules
 if [ "$CHANGES" = true ]; then
     echo "There are changes in the modules"
     (cd "$(dirname "$0")/mounts/modules" && ./install.sh)
-    (cd "$(dirname "$0")/run" && docker-compose build && docker-compose up -d)
+    (cd "$(dirname "$0")/run" && docker-compose down && docker-compose build && docker-compose up -d)
 fi
