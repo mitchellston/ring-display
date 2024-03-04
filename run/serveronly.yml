@@ -1,9 +1,9 @@
-version: '3'
+version: "3"
 
 services:
   magicmirror:
     container_name: mm
-    image: karsten13/magicmirror:latest
+    image: karsten13/magicmirror:v2.25.0
     ports:
       - "8080:8080"
     volumes:
@@ -11,7 +11,7 @@ services:
       - ../mounts/modules:/opt/magic_mirror/modules
       - ../mounts/css:/opt/magic_mirror/css
     restart: unless-stopped
-    command: 
+    command:
       - npm
       - run
       - server
