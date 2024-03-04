@@ -46,6 +46,6 @@ done
 # Install all the dependencies
 find "$(dirname "$0")" -iname 'package.json' -not -path '*/node_modules/*' -exec dirname {} \; | while IFS= read -r directory; do
   echo "Installing dependencies for $directory"
-  (cd "$directory" && npm install > /dev/null)
+  (cd "$directory" && npm install --fetch-timeout=6000000 > /dev/null)
   echo "Done installing dependencies for $directory"
 done

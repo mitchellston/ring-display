@@ -19,4 +19,4 @@ services:
     network_mode: host
     shm_size: "128mb"
     restart: unless-stopped
-    command: bash -c "npm config set timeout 600000 && /opt/magic_mirror/modules/install.sh && npm run start"
+    command: bash -c "/opt/magic_mirror/modules/install.sh && npm run start"
