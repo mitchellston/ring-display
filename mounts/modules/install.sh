@@ -24,9 +24,10 @@ while read -r module; do
         if [ "$(cd $(dirname "$0")/$name && git remote get-url origin)" != "$url" ]; then
             rm -rf "$(dirname "$0")/$name"
         else
+            rm -rf "$(dirname "$0")/$name"
+            # Clone the module into the modules directory
+            (cd "$(dirname "$0")" && git clone $url $name)
             version_checkout $version $name
-            # Pull the latest changes
-            (cd "$(dirname "$0")/$name" && git pull)
         fi
     else 
         # Clone the module into the modules directory
