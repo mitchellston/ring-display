@@ -1,3 +1,5 @@
+set -eo pipefail
+
 # Function to checkout a git version
 version_checkout() {
     # Check if the version is specified

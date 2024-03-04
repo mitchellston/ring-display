@@ -1,3 +1,5 @@
+set -eo pipefail
+
 # check if there are any changes on origin
 if [ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]; then
     echo "There are changes on origin"

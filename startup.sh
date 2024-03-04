@@ -1,3 +1,5 @@
+set -eo pipefail
+
 $(dirname "$0")/update.sh
 
 # Start docker containers
