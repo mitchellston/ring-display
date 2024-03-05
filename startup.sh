@@ -3,7 +3,7 @@ set -eo pipefail
 $(dirname "$0")/update.sh
 
 # Start docker containers
-(cd "$(dirname "$0")/run" && docker-compose down && docker-compose build && docker-compose up -d)
+(cd "$(dirname "$0")/run" && docker-compose down && sudo docker-compose build && docker-compose up -d)
 
 # check if cron is installed and install it if not (for debian based systems and mac)
 if ! [ -x "$(command -v cron)" ]; then
