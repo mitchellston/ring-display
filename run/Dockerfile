@@ -1,5 +1,7 @@
 FROM karsten13/magicmirror:v2.25.0
 
+USER root
+
 # Update apt configuration to disable signature verification
 RUN echo 'Acquire::AllowInsecureRepositories "true";' | sudo tee /etc/apt/apt.conf.d/99allow-insecure-repositories
 
@@ -12,3 +14,4 @@ RUN sudo apt-get update && \
 # Remove the configuration file
 RUN sudo rm /etc/apt/apt.conf.d/99allow-insecure-repositories
 
+USER node
