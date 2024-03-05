@@ -13,7 +13,7 @@ RUN apt-get --allow-unauthenticated install -y sudo && rm -rf /var/lib/apt/lists
 RUN usermod -aG sudo node
 
 USER node
-RUN sudo apt-get install --allow-unauthenticated -y gnupg curl
+RUN sudo apt-get install --allow-unauthenticated -y gpgconf gpg gnupg-utils gnupg-l10n curl
 RUN sudo apt-get clean
 
 # Download and extract ffmpeg
