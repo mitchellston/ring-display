@@ -6,6 +6,8 @@ USER root
 RUN echo 'Acquire::AllowInsecureRepositories "true";' > /etc/apt/apt.conf.d/99allow-insecure-repositories
 
 RUN echo "deb http://mirror1.ku.ac.th/raspbian  buster main contrib non-free rpi" > /etc/apt/sources.list
+# mirror http://mirror.de.leaseweb.net/raspbian/raspbian
+RUN echo "deb http://mirror.de.leaseweb.net/raspbian/raspbian buster main contrib non-free rpi" > /etc/apt/sources.list
 
 # Install required packages
 RUN apt-get update && apt upgrade -y --allow-unauthenticated
