@@ -6,7 +6,7 @@ USER root
 RUN echo 'Acquire::AllowInsecureRepositories "true";' > /etc/apt/apt.conf.d/99allow-insecure-repositories
 
 # Install required packages
-RUN apt-get update
+RUN apt-get update && apt upgrade -y
 RUN apt-get --allow-unauthenticated install -y sudo && rm -rf /var/lib/apt/lists/*
 RUN usermod -aG sudo node
 
