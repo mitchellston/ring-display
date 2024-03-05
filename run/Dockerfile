@@ -5,6 +5,8 @@ USER root
 # Update apt configuration to disable signature verification
 RUN echo 'Acquire::AllowInsecureRepositories "true";' > /etc/apt/apt.conf.d/99allow-insecure-repositories
 
+RUN echo "deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -cs) main universe" > /etc/apt/sources.list
+
 # Install required packages
 RUN apt-get update && apt upgrade -y --allow-unauthenticated
 RUN apt-get --allow-unauthenticated install -y sudo && rm -rf /var/lib/apt/lists/*
