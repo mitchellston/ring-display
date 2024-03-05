@@ -11,7 +11,6 @@ RUN apt-get --allow-unauthenticated install -y sudo && rm -rf /var/lib/apt/lists
 RUN usermod -aG sudo node
 
 USER node
-RUN sudo apt-get install -y --no-install-recommends apt-utils --allow-unauthenticated
 RUN sudo apt-get install --allow-unauthenticated -y gnupg curl
 RUN sudo apt-get clean
 
