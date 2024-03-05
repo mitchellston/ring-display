@@ -5,12 +5,7 @@ USER root
 # Update apt configuration to disable signature verification
 RUN echo 'Acquire::AllowInsecureRepositories "true";' > /etc/apt/apt.conf.d/99allow-insecure-repositories
 
-RUN echo "deb http://archive.raspbian.org/raspbian wheezy main contrib non-free" > /etc/apt/sources.list
-RUN echo "deb-src http://archive.raspbian.org/raspbian wheezy main contrib non-free" >> /etc/apt/sources.list
-RUN echo "deb http://archive.raspbian.org/raspbian jessie main contrib non-free" >> /etc/apt/sources.list
-RUN echo "deb-src http://archive.raspbian.org/raspbian jessie main contrib non-free" >> /etc/apt/sources.list
-RUN echo "deb http://archive.raspbian.org/raspbian stretch main contrib non-free" >> /etc/apt/sources.list
-RUN echo "deb http://mirror1.ku.ac.th/raspbian  buster main contrib non-free rpi" >> /etc/apt/sources.list
+RUN echo "deb http://mirror1.ku.ac.th/raspbian  buster main contrib non-free rpi" > /etc/apt/sources.list
 
 # Install required packages
 RUN apt-get update && apt upgrade -y --allow-unauthenticated
