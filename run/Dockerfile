@@ -7,7 +7,7 @@ RUN echo 'Acquire::AllowInsecureRepositories "true";' > /etc/apt/apt.conf.d/99al
 
 # Install required packages
 RUN apt-get update
-RUN apt-get install -y --allow-unauthenticated --no-install-recommends apt-utils
+RUN apt-get install -y --no-install-recommends apt-utils
 RUN apt-get install --allow-unauthenticated -y gnupg curl
 RUN apt-get clean
 
