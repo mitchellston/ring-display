@@ -1,11 +1,9 @@
 set -eo pipefail
 
-# check if there are any changes on origin and pull the latest changes (with git diff origin/master..HEAD)
-if [[ "$(git diff origin/main)" != "" ]]; then
-    echo "There are changes in the main branch, pulling the latest changes"
-    git reset --hard origin/main
-    git pull
-    echo "Changes pulled"
+git reset --hard
+# pull the latest changes from the git repo and if there are any changes, restart the container
+if [ $(git pull | wc -l) -gt 1 ]; then
+    (cd "$(dirname "$0")/run" && docker-compose down && docker-compose build && docker-compose up -d)
 fi
 
 # Check if there are any changes in the modules
