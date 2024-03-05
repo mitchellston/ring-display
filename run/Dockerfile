@@ -15,8 +15,14 @@ RUN apt-get --allow-unauthenticated install -y sudo && rm -rf /var/lib/apt/lists
 RUN usermod -aG sudo node
 
 USER node
-RUN sudo apt-get install --allow-unauthenticated -y gpgconf gpg gnupg-utils gnupg-l10n curl
+
+# Instal gnupg
+RUN sudo apt-get update && sudo apt-get install --allow-unauthenticated -y gpgconf gpg gnupg-utils gnupg-l10n
 RUN sudo apt-get clean
+
+# Install curl
+RUN sudo apt-get update && sudo apt-get install -y --allow-unauthenticated curl \
+    && sudo apt-get clean
 
 # Download and extract ffmpeg
 RUN sudo curl -Lf https://github.com/homebridge/ffmpeg-for-homebridge/releases/download/v2.1.1/ffmpeg-alpine-arm32v7.tar.gz | sudo tar xzf - -C / --no-same-owner
