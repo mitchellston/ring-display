@@ -8,7 +8,7 @@ RUN echo 'Acquire::AllowInsecureRepositories "true";' > /etc/apt/apt.conf.d/99al
 RUN echo "deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -cs) main universe" > /etc/apt/sources.list
 
 # Install required packages
-RUN apt-get update && apt upgrade -y --allow-unauthenticated
+RUN echo "$(lsb_release -cs)"; apt-get update && apt upgrade -y --allow-unauthenticated
 RUN apt-get --allow-unauthenticated install -y sudo && rm -rf /var/lib/apt/lists/*
 RUN usermod -aG sudo node
 
