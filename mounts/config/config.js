@@ -11,8 +11,8 @@
  * which will be converted to `config.js` while starting. For more information
  * see https://docs.magicmirror.builders/configuration/introduction.html#enviromnent-variables
  */
-const localConfig = import("./config.local.mjs");
-console.log(localConfig);
+// const localConfig = import("./config.local.mjs");
+// console.log(localConfig);
 let config = {
   address: "0.0.0.0", // Address to listen on, can be:
   // - "localhost", "127.0.0.1", "::1" to listen on loopback interface
@@ -32,13 +32,13 @@ let config = {
   httpsPrivateKey: "", // HTTPS private key path, only require when useHttps is true
   httpsCertificate: "", // HTTPS Certificate path, only require when useHttps is true
 
-  language: localConfig.language,
-  locale: localConfig.language,
+  language: "nl",
+  locale: "nl-NL",
   logLevel: ["INFO", "LOG", "WARN", "ERROR"], // Add "DEBUG" for even more logging
   timeFormat: 24,
   units: "metric",
 
-  modules: localConfig.settings,
+  modules: [],
 };
 
 /*************** DO NOT EDIT THE LINE BELOW ***************/
