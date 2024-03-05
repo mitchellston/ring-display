@@ -1,8 +1,8 @@
 set -eo pipefail
 
 git reset --hard
-# pull the latest changes from the git repo and if there are any changes, restart the container
-if [ $(git pull | wc -l) -gt 1 ]; then
+# pull the latest changes from the git repo and if there are any changes, restart the container (if there are no change git pull returns "Already up to date.")
+if [ $(git pull) != "Already up to date." ]; then
     (cd "$(dirname "$0")/run" && docker-compose down && docker-compose build && docker-compose up -d)
 fi
 
