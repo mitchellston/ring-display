@@ -1,4 +1,4 @@
-FROM karsten13/magicmirror:v2.25.0
+FROM karsten13/magicmirror:v2.26.0
 
 USER root
 
