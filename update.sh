@@ -1,6 +1,6 @@
 set -eo pipefail
 
-# check if there are any changes on origin
+# check if there are any changes on origin and pull the latest changes
 if [ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]; then
     echo "There are changes on origin"
     git pull
