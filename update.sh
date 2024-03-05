@@ -1,7 +1,6 @@
 set -eo pipefail
 
 # check if there are any changes on origin and pull the latest changes (with git diff origin/master..HEAD)
-echo "$(git diff origin/main)"
 if [[ "$(git diff origin/main)" != "" ]]; then
     echo "There are changes in the main branch, pulling the latest changes"
     git reset --hard origin/main
