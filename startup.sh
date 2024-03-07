@@ -1,4 +1,4 @@
-set -eo pipefail
+set -euo pipefail
 
 $(dirname "$0")/update.sh
 

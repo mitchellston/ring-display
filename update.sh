@@ -1,4 +1,4 @@
-set -eo pipefail
+set -euo pipefail
 
 git reset --hard
 # pull the latest changes from the git repo and if there are any changes, restart the container (if there are no change git pull returns "Already up to date.")
