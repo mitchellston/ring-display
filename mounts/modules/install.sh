@@ -1,4 +1,4 @@
-set -euo pipefail
+# set -euo pipefail
 
 # Function to checkout a git version
 version_checkout() {
