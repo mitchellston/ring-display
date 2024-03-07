@@ -26,4 +26,4 @@ if crontab -l | grep -q "$(dirname "$0")/update.sh"; then
   exit 0
 fi
 # Create a cron job that runs every 1 hour to update the modules and restart the container if necessary
-(crontab -l 2>/dev/null; echo "0 * * * * $(dirname "$0")/update.sh") | crontab -
+(crontab -l 2>/dev/null; echo "0 * * * * $(pwd)/update.sh") | crontab -
