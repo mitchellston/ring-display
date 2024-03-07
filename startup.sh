@@ -19,5 +19,11 @@ if ! [ -x "$(command -v cron)" ]; then
   fi
 fi
 
+
+# Only run if cron is not already set up
+if crontab -l | grep -q "$(dirname "$0")/update.sh"; then
+  echo "Cron job already set up"
+  exit 0
+fi
 # Create a cron job that runs every 1 hour to update the modules and restart the container if necessary
 (crontab -l 2>/dev/null; echo "0 * * * * $(dirname "$0")/update.sh") | crontab -
