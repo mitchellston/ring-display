@@ -3,7 +3,8 @@ version: "3"
 services:
   magicmirror:
     container_name: mm
-    build: .
+    # build: .
+    image: karsten13/magicmirror:latest
     volumes:
       - ../mounts/config:/opt/magic_mirror/config
       - ../mounts/modules:/opt/magic_mirror/modules
