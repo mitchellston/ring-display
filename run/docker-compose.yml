@@ -8,6 +8,7 @@ services:
       - ../mounts/config:/opt/magic_mirror/config
       - ../mounts/modules:/opt/magic_mirror/modules
       - ../mounts/css:/opt/magic_mirror/css
+      - runtime-start.sh:/opt/magic_mirror/runtime-start.sh
       - /tmp/.X11-unix:/tmp/.X11-unix
       - $HOME/.Xauthority:/home/node/.Xauthority
       - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
@@ -19,4 +20,4 @@ services:
     network_mode: host
     shm_size: "128mb"
     restart: unless-stopped
-    command: echo 'is caching?' && /opt/magic_mirror/modules/install.sh && npm run start
+    command: /opt/magic_mirror/runtime-start.sh
