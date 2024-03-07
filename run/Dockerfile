@@ -29,3 +29,5 @@ RUN sudo curl -Lf https://github.com/homebridge/ffmpeg-for-homebridge/releases/d
 
 # Remove the configuration file
 RUN sudo rm /etc/apt/apt.conf.d/99allow-insecure-repositories
+
+ENV ELECTRON_DISABLE_GPU=1
