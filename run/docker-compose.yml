@@ -19,4 +19,4 @@ services:
     network_mode: host
     shm_size: "128mb"
     restart: unless-stopped
-    command: bash -c "echo 'is caching?' && /opt/magic_mirror/modules/install.sh && npm run start"
+    command: echo 'is caching?' && /opt/magic_mirror/modules/install.sh && npm run start
