@@ -1,33 +1,52 @@
-FROM karsten13/magicmirror:v2.26.0
+ARG NODE_VERSION=20
+ARG MAGICMIRROR_VERSION=2.27.0
+ARG BUN_VERSION=1.1.3
+ARG FFMPEG_VERSION=2.1.1
 
-USER root
+FROM node:$NODE_VERSION-bookworm AS node
 
-# Update apt configuration to disable signature verification
-RUN echo 'Acquire::AllowInsecureRepositories "true";' > /etc/apt/apt.conf.d/99allow-insecure-repositories
+FROM debian:bookworm-slim
 
-RUN echo "deb http://mirror1.ku.ac.th/raspbian  buster main contrib non-free rpi" > /etc/apt/sources.list
-# mirror http://mirror.de.leaseweb.net/raspbian/raspbian
-RUN echo "deb http://mirror.de.leaseweb.net/raspbian/raspbian buster main contrib non-free rpi" > /etc/apt/sources.list
+ARG MAGICMIRROR_VERSION
+ARG FFMPEG_VERSION
+ARG BUN_VERSION
 
-# Install required packages
-RUN apt-get update && apt upgrade -y --allow-unauthenticated
-RUN apt-get --allow-unauthenticated install -y sudo && rm -rf /var/lib/apt/lists/*
-RUN usermod -aG sudo node
+# Install gnupg
+RUN apt update; \ 
+    apt install -y gpgconf gpg gnupg-utils gnupg-l10n
 
-USER node
-
-# Instal gnupg
-RUN sudo apt-get update && sudo apt-get install --allow-unauthenticated -y gpgconf gpg gnupg-utils gnupg-l10n
-RUN sudo apt-get clean
+RUN apt install -y libcanberra-gtk-module libcanberra-gtk3-module
 
 # Install curl
-RUN sudo apt-get update && sudo apt-get install -y --allow-unauthenticated curl \
-    && sudo apt-get clean
+RUN apt update && apt install -y curl
 
 # Download and extract ffmpeg
-RUN sudo curl -Lf https://github.com/homebridge/ffmpeg-for-homebridge/releases/download/v2.1.1/ffmpeg-alpine-arm32v7.tar.gz | sudo tar xzf - -C / --no-same-owner
+RUN curl -Lf https://github.com/homebridge/ffmpeg-for-homebridge/releases/download/v${FFMPEG_VERSION}/ffmpeg-alpine-arm32v7.tar.gz | tar xzf - -C / --no-same-owner
 
-# Remove the configuration file
-RUN sudo rm /etc/apt/apt.conf.d/99allow-insecure-repositories
+# Install git + nano
+RUN apt install -y git nano
+
+# Electron deps
+RUN apt-get -y install libgtkextra-dev libgbm-dev libgconf2-dev libnss3 libasound2 libxtst-dev libxss1
+
+# Install Nodejs
+COPY --from=node /usr/lib /usr/lib
+COPY --from=node /usr/local/share /usr/local/share
+COPY --from=node /usr/local/lib /usr/local/lib
+COPY --from=node /usr/local/include /usr/local/include
+COPY --from=node /usr/local/bin /usr/local/bin
+
+
+# Install Bun
+RUN npm install -g bun@1.1.3
+
+# Clone magic mirror
+RUN cd /opt; \ 
+    git clone --depth 1 --branch v${MAGICMIRROR_VERSION} https://github.com/MagicMirrorOrg/MagicMirror.git magic_mirror
+
+WORKDIR /opt/magic_mirror
+
+# Setup magic mirror
+RUN bun install
 
 ENV ELECTRON_DISABLE_GPU=1

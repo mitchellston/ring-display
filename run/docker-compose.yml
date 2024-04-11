@@ -1,10 +1,10 @@
-version: "3"
+# version: "3"
 
 services:
   magicmirror:
     container_name: mm
-    # build: .
-    image: karsten13/magicmirror:latest
+    build: .
+    # image: karsten13/magicmirror:latest
     volumes:
       - ../mounts/config:/opt/magic_mirror/config
       - ../mounts/modules:/opt/magic_mirror/modules
@@ -22,7 +22,4 @@ services:
     shm_size: "128mb"
     restart: unless-stopped
     # command: /opt/magic_mirror/runtime-start.sh
-    command:
-      - npm
-      - run
-      - start
+    command: bash -c "sleep 3600"
