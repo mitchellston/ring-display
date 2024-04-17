@@ -37,6 +37,5 @@ done < $(dirname "$0")/mounts/modules/modules
 # If there are changes, update the modules and restart the container
 if [ "$CHANGES" = true ]; then
     echo "There are changes in the modules"
-    (cd "$(dirname "$0")/mounts/modules" && ./install.sh)
     (cd "$(dirname "$0")/run" && docker-compose down && docker-compose build && docker-compose up -d)
 fi
