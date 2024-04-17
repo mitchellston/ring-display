@@ -1,1 +1,1 @@
-echo $DISPLAY && xauth add $DISPLAY . abf87ea2c8a4ed7f41ce8e7b99047870 && /opt/magic_mirror/modules/install.sh && npm run start
+/opt/magic_mirror/modules/install.sh && npm run start

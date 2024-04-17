@@ -17,9 +17,7 @@ services:
     devices:
       - /dev/vchiq
     environment:
-      DISPLAY: unix:0.0
+      DISPLAY: unix$DISPLAY
     network_mode: host
     shm_size: "128mb"
     restart: unless-stopped
-    # command: /opt/magic_mirror/runtime-start.sh
-    command: bash -c "sleep 3600"
