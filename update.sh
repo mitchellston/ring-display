@@ -1,5 +1,14 @@
 set -euo pipefail
 
+if ! [ -x "$(command -v docker-compose)" ]; then
+    if [ -x "$(command -v docker)" ]; then
+        alias "docker-compose"="docker compose"
+    else
+        echo 'Error: docker-compose is not installed and we cannot install it' >&2
+        exit 1
+    fi
+fi
+
 git reset --hard
 # pull the latest changes from the git repo and if there are any changes, restart the container (if there are no change git pull returns "Already up to date.")
 if [[ "$(git pull)" != "Already up to date." ]]; then
@@ -10,7 +19,7 @@ fi
 CHANGES=false
 while read -r module; do
     # Skip empty lines and comments
-    if [ -z "$module" ] || [[ "$module" =~ ^# ]] ; then
+    if [ -z "$module" ] || [[ "$module" =~ ^# ]]; then
         continue
     fi
     # Split by space and get the first element
@@ -29,10 +38,10 @@ while read -r module; do
                 CHANGES=true
             fi
         fi
-    else 
+    else
         CHANGES=true
     fi
-done < $(dirname "$0")/mounts/modules/modules
+done <$(dirname "$0")/mounts/modules/modules
 
 # If there are changes, update the modules and restart the container
 if [ "$CHANGES" = true ]; then
