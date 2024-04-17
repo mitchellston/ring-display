@@ -38,7 +38,12 @@ let config = {
   timeFormat: 24,
   units: "metric",
 
-  modules: [],
+  modules: [
+    {
+      module: "clock",
+      position: "top_left",
+    },
+  ],
 };
 
 /*************** DO NOT EDIT THE LINE BELOW ***************/

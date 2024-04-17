@@ -4,15 +4,11 @@ services:
   magicmirror:
     container_name: mm
     build: .
-    # image: karsten13/magicmirror:latest
     volumes:
       - ../mounts/config:/opt/magic_mirror/config
-      - ../mounts/modules:/opt/magic_mirror/modules
+      - ../mounts/modules:/opt/magic_mirror/modules:rw
       - ../mounts/css:/opt/magic_mirror/css
       - ./runtime-start.sh:/opt/magic_mirror/runtime-start.sh
-      - /tmp/.X11-unix:/tmp/.X11-unix
-      - $HOME/.Xauthority:/home/node/.Xauthority
-      - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
     privileged: true # avoids dbus errors in logs
     devices:
       - /dev/vchiq

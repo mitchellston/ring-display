@@ -11,7 +11,7 @@ ARG BUN_VERSION
 
 # install electron dependencies or more if your library has other dependencies
 RUN apt-get update && apt-get install \
-    libx11-xcb1 libxcb-dri3-0 libxtst6 libgl1-mesa-dri libnss3 libatk-bridge2.0-0 libgtk-3-0 libxss1 libasound2 \
+    libx11-xcb1 libxcb-dri3-0 libcanberra-gtk-module libcanberra-gtk3-module libxtst6 libgl1-mesa-dri libnss3 libatk-bridge2.0-0 libgtk-3-0 libxss1 libasound2 \
     -yq --no-install-suggests --no-install-recommends \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install \
 RUN apt update && apt install -y curl
 
 # Download and extract ffmpeg
-RUN curl -Lf https://github.com/homebridge/ffmpeg-for-homebridge/releases/download/v${FFMPEG_VERSION}/ffmpeg-alpine-arm32v7.tar.gz | tar xzf - -C / --no-same-owner
+RUN curl -Lf https://github.com/homebridge/ffmpeg-for-homebridge/releases/download/v${FFMPEG_VERSION}/ffmpeg-alpine-x86_64.tar.gz | tar xzf - -C / --no-same-owner
 
 # Install git + nano
 RUN apt install -y git nano
