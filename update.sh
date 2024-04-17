@@ -1,6 +1,8 @@
 set -euo pipefail
 
-git reset --hard
+$(dirname "$0")/helpers/set-docker-alias.sh
+
+git reset --soft HEAD~1
 # pull the latest changes from the git repo and if there are any changes, restart the container (if there are no change git pull returns "Already up to date.")
 if [[ "$(git pull)" != "Already up to date." ]]; then
     (cd "$(dirname "$0")/run" && docker-compose down && docker-compose build && docker-compose up -d)
@@ -10,7 +12,7 @@ fi
 CHANGES=false
 while read -r module; do
     # Skip empty lines and comments
-    if [ -z "$module" ] || [[ "$module" =~ ^# ]] ; then
+    if [ -z "$module" ] || [[ "$module" =~ ^# ]]; then
         continue
     fi
     # Split by space and get the first element
@@ -29,10 +31,10 @@ while read -r module; do
                 CHANGES=true
             fi
         fi
-    else 
+    else
         CHANGES=true
     fi
-done < $(dirname "$0")/mounts/modules/modules
+done <$(dirname "$0")/mounts/modules/modules
 
 # If there are changes, update the modules and restart the container
 if [ "$CHANGES" = true ]; then
