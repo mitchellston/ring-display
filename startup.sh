@@ -1,18 +1,21 @@
 set -euo pipefail
 
+DOCKER_COMPOSE_PATH=""
 if ! [ -x "$(command -v docker-compose)" ]; then
   if [ -x "$(command -v docker)" ]; then
-    alias "docker-compose"="docker compose"
+    DOCKER_COMPOSE_PATH="$(command -v docker) compose"
   else
     echo 'Error: docker-compose is not installed and we cannot install it' >&2
     exit 1
   fi
+else
+  DOCKER_COMPOSE_PATH="$(command -v docker-compose)"
 fi
 
 $(dirname "$0")/update.sh
 
 # Start docker containers
-(cd "$(dirname "$0")/run" && docker-compose down && sudo docker-compose build && docker-compose up -d)
+(cd "$(dirname "$0")/run" && $DOCKER_COMPOSE_PATH down && sudo $DOCKER_COMPOSE_PATH build && $DOCKER_COMPOSE_PATH up -d)
 
 # check if cron is installed and install it if not (for debian based systems and mac)
 if ! [ -x "$(command -v cron)" ]; then
@@ -23,7 +26,7 @@ if ! [ -x "$(command -v cron)" ]; then
     brew install cron
   else
     echo 'Error: cron is not installed and we cannot install it' >&2
-    (cd "$(dirname "$0")/run" && docker-compose down)
+    (cd "$(dirname "$0")/run" && $DOCKER_COMPOSE_PATH down)
     exit 1
   fi
 fi

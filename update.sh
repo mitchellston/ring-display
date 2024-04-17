@@ -1,18 +1,21 @@
 set -euo pipefail
 
+DOCKER_COMPOSE_PATH=""
 if ! [ -x "$(command -v docker-compose)" ]; then
     if [ -x "$(command -v docker)" ]; then
-        alias "docker-compose"="docker compose"
+        DOCKER_COMPOSE_PATH="$(command -v docker) compose"
     else
         echo 'Error: docker-compose is not installed and we cannot install it' >&2
         exit 1
     fi
+else
+    DOCKER_COMPOSE_PATH="$(command -v docker-compose)"
 fi
 
 git reset --hard
 # pull the latest changes from the git repo and if there are any changes, restart the container (if there are no change git pull returns "Already up to date.")
 if [[ "$(git pull)" != "Already up to date." ]]; then
-    (cd "$(dirname "$0")/run" && docker-compose down && docker-compose build && docker-compose up -d)
+    (cd "$(dirname "$0")/run" && $DOCKER_COMPOSE_PATH down && $DOCKER_COMPOSE_PATH build && $DOCKER_COMPOSE_PATH up -d)
 fi
 
 # Check if there are any changes in the modules
@@ -47,5 +50,5 @@ done <$(dirname "$0")/mounts/modules/modules
 if [ "$CHANGES" = true ]; then
     echo "There are changes in the modules"
     (cd "$(dirname "$0")/mounts/modules" && ./install.sh)
-    (cd "$(dirname "$0")/run" && docker-compose down && docker-compose build && docker-compose up -d)
+    (cd "$(dirname "$0")/run" && $DOCKER_COMPOSE_PATH down && $DOCKER_COMPOSE_PATH build && $DOCKER_COMPOSE_PATH up -d)
 fi
