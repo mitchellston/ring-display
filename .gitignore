@@ -13,3 +13,6 @@ mounts/modules/*
 
 mounts/config/*
 !mounts/config/config.js.template
+
+*env
+*.example
