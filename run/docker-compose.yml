@@ -1,13 +1,13 @@
-version: "3"
+# version: "3"
 
 services:
   magicmirror:
     container_name: mm
-    # build: .
-    image: karsten13/magicmirror:latest
+    build: .
+    # image: karsten13/magicmirror:latest
     volumes:
       - ../mounts/config:/opt/magic_mirror/config
-      - ../mounts/modules:/opt/magic_mirror/modules
+      - ../mounts/modules:/opt/magic_mirror/modules:rw
       - ../mounts/css:/opt/magic_mirror/css
       - ./runtime-start.sh:/opt/magic_mirror/runtime-start.sh
       - /tmp/.X11-unix:/tmp/.X11-unix
@@ -17,12 +17,10 @@ services:
     devices:
       - /dev/vchiq
     environment:
-      DISPLAY: unix:0.0
+      DISPLAY: unix$DISPLAY
+      DBUS_SESSION_BUS_ADDRESS: unix:path=/var/run/dbus/system_bus_socket
+    env_file:
+      ../.env
     network_mode: host
     shm_size: "128mb"
     restart: unless-stopped
-    # command: /opt/magic_mirror/runtime-start.sh
-    command:
-      - npm
-      - run
-      - start

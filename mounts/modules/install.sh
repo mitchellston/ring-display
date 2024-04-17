@@ -49,6 +49,6 @@ done
 # Install all the dependencies
 find "$(dirname "$0")" -iname 'package.json' -not -path '*/node_modules/*' -exec dirname {} \; | while IFS= read -r directory; do
   echo "Installing dependencies for $directory"
-  (cd "$directory" && yarn install --ignore-scripts)
+  (cd "$directory" && bun install --ignore-scripts)
   echo "Done installing dependencies for $directory"
 done

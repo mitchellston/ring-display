@@ -1,1 +1,1 @@
-echo 'is caching?' && /opt/magic_mirror/modules/install.sh && npm run start
+/opt/magic_mirror/modules/install.sh && npm run start

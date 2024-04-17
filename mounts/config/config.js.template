@@ -11,8 +11,53 @@
  * which will be converted to `config.js` while starting. For more information
  * see https://docs.magicmirror.builders/configuration/introduction.html#enviromnent-variables
  */
-// const localConfig = import("./config.local.mjs");
-// console.log(localConfig);
+let modules = [
+  {
+    module: "alert",
+  },
+
+  {
+    module: "MMM-Ring",
+    position: "middle_center",
+    config: {
+      ring2faRefreshToken: "${RING_REFRESH_TOKEN}",
+    },
+  }
+];
+
+if ("${CLOCK_ENABLED}" == "yes")
+  modules.push({
+    module: "clock",
+    position: "top_left",
+  });
+
+if ("${WEATHER_ENABLED}" == "yes") {
+  modules.push({
+    module: "weather",
+    position: "top_right",
+    config: {
+      weatherProvider: "openweathermap",
+      type: "current",
+      location: "${WEATHER_CITY}",
+      locationID: "${WEATHER_LOCATION_ID}", //ID from http://bulk.openweathermap.org/sample/city.list.json.gz; unzip the gz file and find your city
+      apiKey: "${WEATHER_OPENWEATHER_API_KEY}",
+    },
+  },)
+  modules.push(
+    {
+      module: "weather",
+      position: "top_right",
+      config: {
+        weatherProvider: "openweathermap",
+        type: "current",
+        location: "${WEATHER_CITY}",
+        locationID: "${WEATHER_LOCATION_ID}", //ID from http://bulk.openweathermap.org/sample/city.list.json.gz; unzip the gz file and find your city
+        apiKey: "${WEATHER_OPENWEATHER_API_KEY}",
+      },
+    },
+  )
+}
+
 let config = {
   address: "0.0.0.0", // Address to listen on, can be:
   // - "localhost", "127.0.0.1", "::1" to listen on loopback interface
@@ -38,7 +83,7 @@ let config = {
   timeFormat: 24,
   units: "metric",
 
-  modules: [],
+  modules: modules,
 };
 
 /*************** DO NOT EDIT THE LINE BELOW ***************/

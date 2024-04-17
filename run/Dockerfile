@@ -1,33 +1,69 @@
-FROM karsten13/magicmirror:v2.26.0
+ARG NODE_VERSION=20
+ARG MAGICMIRROR_VERSION=2.27.0
+ARG BUN_VERSION=1.1.3
+ARG FFMPEG_VERSION=2.1.1
 
-USER root
+FROM node:$NODE_VERSION-bookworm 
 
-# Update apt configuration to disable signature verification
-RUN echo 'Acquire::AllowInsecureRepositories "true";' > /etc/apt/apt.conf.d/99allow-insecure-repositories
+ARG MAGICMIRROR_VERSION
+ARG FFMPEG_VERSION
+ARG BUN_VERSION
 
-RUN echo "deb http://mirror1.ku.ac.th/raspbian  buster main contrib non-free rpi" > /etc/apt/sources.list
-# mirror http://mirror.de.leaseweb.net/raspbian/raspbian
-RUN echo "deb http://mirror.de.leaseweb.net/raspbian/raspbian buster main contrib non-free rpi" > /etc/apt/sources.list
+# install electron dependencies or more if your library has other dependencies
+RUN apt-get update && apt-get install \
+    libx11-xcb1 libxcb-dri3-0 libcanberra-gtk-module libcanberra-gtk3-module libxtst6 libgl1-mesa-dri libnss3 libatk-bridge2.0-0 libgtk-3-0 libxss1 libasound2 \
+    -yq --no-install-suggests --no-install-recommends \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install required packages
-RUN apt-get update && apt upgrade -y --allow-unauthenticated
-RUN apt-get --allow-unauthenticated install -y sudo && rm -rf /var/lib/apt/lists/*
-RUN usermod -aG sudo node
+# Install curl
+RUN apt update && apt install -y curl
+
+# Download and extract ffmpeg
+RUN curl -Lf https://github.com/homebridge/ffmpeg-for-homebridge/releases/download/v${FFMPEG_VERSION}/ffmpeg-alpine-x86_64.tar.gz | tar xzf - -C / --no-same-owner
+
+# Install git + nano
+RUN apt install -y git nano
+
+# Electron deps
+RUN apt-get -y install libgtkextra-dev libgbm-dev libgconf2-dev libnss3 libasound2 libxtst-dev libxss1
+
+RUN apt-get -y install dbus; \
+    dbus-uuidgen > /var/lib/dbus/machine-id; \
+    chown -R node: /run/dbus
+
+# Install Bun
+RUN npm install -g bun@1.1.3
+
+RUN chown -R node: /opt
 
 USER node
 
-# Instal gnupg
-RUN sudo apt-get update && sudo apt-get install --allow-unauthenticated -y gpgconf gpg gnupg-utils gnupg-l10n
-RUN sudo apt-get clean
+RUN mkdir -p /var/run/dbus; \
+    dbus-daemon --system &> /dev/null
 
-# Install curl
-RUN sudo apt-get update && sudo apt-get install -y --allow-unauthenticated curl \
-    && sudo apt-get clean
+# Clone magic mirror
+RUN cd /opt; \ 
+    git clone --depth 1 --branch v${MAGICMIRROR_VERSION} https://github.com/MagicMirrorOrg/MagicMirror.git magic_mirror
 
-# Download and extract ffmpeg
-RUN sudo curl -Lf https://github.com/homebridge/ffmpeg-for-homebridge/releases/download/v2.1.1/ffmpeg-alpine-arm32v7.tar.gz | sudo tar xzf - -C / --no-same-owner
+WORKDIR /opt/magic_mirror
 
-# Remove the configuration file
-RUN sudo rm /etc/apt/apt.conf.d/99allow-insecure-repositories
+# Setup magic mirror
+RUN bun install
 
-ENV ELECTRON_DISABLE_GPU=1
+RUN npx electron-rebuild
+
+# Electron needs root for sand boxing
+# see https://github.com/electron/electron/issues/17972
+USER root
+RUN chown root /opt/magic_mirror/node_modules/electron/dist/chrome-sandbox
+RUN chmod 4755 /opt/magic_mirror/node_modules/electron/dist/chrome-sandbox
+
+# Runtime start script
+COPY runtime-start.sh /opt/magic_mirror/runtime-start.sh
+RUN chmod 777 /opt/magic_mirror/runtime-start.sh
+
+USER node
+
+# ENV DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+
+CMD ["/bin/bash", "-c", "/opt/magic_mirror/runtime-start.sh"]

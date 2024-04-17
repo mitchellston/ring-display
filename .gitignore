@@ -10,3 +10,9 @@ mounts/modules/*
 !mounts/modules/default
 !mounts/modules/modules
 !mounts/modules/install.sh
+
+mounts/config/*
+!mounts/config/config.js.template
+
+*env*
+!*.example
