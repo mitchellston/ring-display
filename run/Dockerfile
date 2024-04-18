@@ -48,7 +48,7 @@ RUN cd /opt; \
 WORKDIR /opt/magic_mirror
 
 # Setup magic mirror
-RUN bun install
+RUN yarn install
 
 RUN npx electron-rebuild
 
