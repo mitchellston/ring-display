@@ -12,7 +12,7 @@ version_checkout() {
 # Load the modules file to get the git urls
 while read -r module; do
     # Skip empty lines and comments
-    if [ -z "$module" ] || [[ "$module" =~ ^# ]] ; then
+    if [ -z "$module" ] || [[ "$module" =~ ^# ]]; then
         continue
     fi
     echo $module
@@ -31,15 +31,15 @@ while read -r module; do
             (cd "$(dirname "$0")" && git clone $url $name)
             version_checkout $version $name
         fi
-    else 
+    else
         # Clone the module into the modules directory
         (cd "$(dirname "$0")" && git clone $url $name)
         version_checkout $version $name
     fi
-done < $(dirname "$0")/modules
+done <$(dirname "$0")/modules
 
 # Remove all modules that are not in the modules file and not the default modules (/default)
-for module in $(ls $(dirname "$0") | grep -v default | grep -v install.sh | grep -v modules ); do
+for module in $(ls $(dirname "$0") | grep -v default | grep -v install.sh | grep -v modules); do
     if ! grep -q $module $(dirname "$0")/modules; then
         echo "Removing $module"
         rm -rf $(dirname "$0")/$module
@@ -48,7 +48,7 @@ done
 
 # Install all the dependencies
 find "$(dirname "$0")" -iname 'package.json' -not -path '*/node_modules/*' -exec dirname {} \; | while IFS= read -r directory; do
-  echo "Installing dependencies for $directory"
-  (cd "$directory" && bun install --ignore-scripts)
-  echo "Done installing dependencies for $directory"
+    echo "Installing dependencies for $directory"
+    (cd "$directory" && yarn install --ignore-scripts)
+    echo "Done installing dependencies for $directory"
 done

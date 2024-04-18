@@ -1,13 +1,13 @@
 ARG NODE_VERSION=20
 ARG MAGICMIRROR_VERSION=2.27.0
-ARG BUN_VERSION=1.1.3
 ARG FFMPEG_VERSION=2.1.1
+ARG YARN_VERSION=1.22.22
 
 FROM node:$NODE_VERSION-bookworm 
 
 ARG MAGICMIRROR_VERSION
 ARG FFMPEG_VERSION
-ARG BUN_VERSION
+ARG YARN_VERSION
 
 # install electron dependencies or more if your library has other dependencies
 RUN apt-get update && apt-get install \
@@ -32,7 +32,7 @@ RUN apt-get -y install dbus; \
     chown -R node: /run/dbus
 
 # Install Bun
-RUN npm install -g bun@1.1.3
+RUN npm install -g yarn@${YARN_VERSION}
 
 RUN chown -R node: /opt
 
