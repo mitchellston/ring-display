@@ -32,7 +32,7 @@ RUN apt-get -y install dbus; \
     chown -R node: /run/dbus
 
 # Install Bun
-RUN npm install -g yarn@${YARN_VERSION}
+RUN npm install -g yarn@${YARN_VERSION} --force
 
 RUN chown -R node: /opt
 
