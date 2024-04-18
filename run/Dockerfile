@@ -47,6 +47,8 @@ RUN cd /opt; \
 
 WORKDIR /opt/magic_mirror
 
+ENV NODE_OPTIONS="--max-old-space-size=8192"
+
 # Setup magic mirror
 RUN yarn install --max-old-space-size=8000
 
