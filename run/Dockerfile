@@ -48,8 +48,8 @@ RUN cd /opt; \
 WORKDIR /opt/magic_mirror
 
 # Setup magic mirror
-RUN export NODE_OPTIONS="--max-old-space-size=8192"; \
-    yarn install --max-old-space-size=8000
+RUN export NODE_OPTIONS="--max-old-space-size=500"; \
+    yarn install --max-old-space-size=500
 
 RUN npx electron-rebuild
 
