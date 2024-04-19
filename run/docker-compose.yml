@@ -3,8 +3,8 @@
 services:
   magicmirror:
     container_name: mm
-    build: .
-    # image: karsten13/magicmirror:latest
+    # build: .
+    image: mitchellston/ring-mm-display:latest
     volumes:
       - ../mounts/config:/opt/magic_mirror/config
       - ../mounts/modules:/opt/magic_mirror/modules:rw

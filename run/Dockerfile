@@ -31,7 +31,7 @@ RUN apt-get -y install dbus; \
     dbus-uuidgen > /var/lib/dbus/machine-id; \
     chown -R node: /run/dbus
 
-# Install Bun
+# Install yarn
 RUN npm install -g yarn@${YARN_VERSION} --force
 
 RUN chown -R node: /opt
@@ -48,8 +48,7 @@ RUN cd /opt; \
 WORKDIR /opt/magic_mirror
 
 # Setup magic mirror
-RUN export NODE_OPTIONS="--max-old-space-size=500"; \
-    yarn install --max-old-space-size=500
+RUN yarn install
 
 RUN npx electron-rebuild
 
@@ -64,6 +63,8 @@ COPY runtime-start.sh /opt/magic_mirror/runtime-start.sh
 RUN chmod 777 /opt/magic_mirror/runtime-start.sh
 
 USER node
+
+RUN export NODE_OPTIONS="--max-old-space-size=500"
 
 # ENV DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
 
