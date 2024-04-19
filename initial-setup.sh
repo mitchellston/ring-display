@@ -27,3 +27,20 @@ newgrp docker
 
 # Export display (display is first screen on host machine from xauth list)
 export DISPLAY=$(echo $DISPLAY | cut -d: -f1)
+
+# Disable screensaver (screensaver will turn off the display, which we don't want)
+gsettings set org.gnome.desktop.screensaver idle-activation-enabled false
+
+# if node is not installed, install it (latest LTS version)
+if ! [ -x "$(command -v node)" ]; then
+    # Get the latest LTS version of node
+    LTS_VERSION=$(curl -sL https://nodejs.org/en/ | grep -oP 'data-version="\K[^"]+' | grep 'LTS' | head -n 1)
+    # Download and install node
+    curl -sL "https://nodejs.org/dist/v$LTS_VERSION/node-v$LTS_VERSION-linux-x64.tar.xz" | sudo tar -xJ -C /usr/local --strip-components=1
+
+    # Add node to the path
+    echo 'export PATH=$PATH:/usr/local/bin' >>~/.bashrc
+    source ~/.bashrc
+fi
+
+npx -p ring-client-api ring-auth-cli
