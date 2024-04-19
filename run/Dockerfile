@@ -66,6 +66,5 @@ USER node
 
 RUN export NODE_OPTIONS="--max-old-space-size=500"
 
-# ENV DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
 
 CMD ["/bin/bash", "-c", "/opt/magic_mirror/runtime-start.sh"]

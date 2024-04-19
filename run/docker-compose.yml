@@ -7,7 +7,7 @@ services:
     image: mitchellston/ring-mm-display:latest
     volumes:
       - ../mounts/config:/opt/magic_mirror/config
-      - ../mounts/modules:/opt/magic_mirror/modules:rw
+      # - ../mounts/modules:/opt/magic_mirror/modules:rw
       - ../mounts/css:/opt/magic_mirror/css
       - ./runtime-start.sh:/opt/magic_mirror/runtime-start.sh
       # - /tmp/.X11-unix:/tmp/.X11-unix

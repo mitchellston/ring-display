@@ -21,9 +21,9 @@ let modules = [
     position: "middle_center",
     config: {
       ring2faRefreshToken: "${RING_REFRESH_TOKEN}",
-      ringStreamMotion: "${RING_STREAM_MOTION}",
-      ringVideoWidth: "${RING_VIDEO_WIDTH}",
-      ringMinutesToStreamVideo: ${RING_MINUTES_TO_STREAM}
+//      ringStreamMotion: "${RING_STREAM_MOTION}",
+//      ringVideoWidth: "${RING_VIDEO_WIDTH}",
+//      ringMinutesToStreamVideo: ${RING_MINUTES_TO_STREAM}
     },
   }
 ];
