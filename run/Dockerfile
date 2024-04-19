@@ -19,7 +19,9 @@ RUN apt-get update && apt-get install \
 RUN apt update && apt install -y curl
 
 # Download and extract ffmpeg
-RUN curl -Lf https://github.com/homebridge/ffmpeg-for-homebridge/releases/download/v${FFMPEG_VERSION}/ffmpeg-alpine-x86_64.tar.gz | tar xzf - -C / --no-same-owner
+# RUN curl -Lf https://github.com/homebridge/ffmpeg-for-homebridge/releases/download/v${FFMPEG_VERSION}/ffmpeg-alpine-x86_64.tar.gz | tar xzf - -C / --no-same-owner
+
+RUN apt-get update && apt-get install -y ffmpeg
 
 # Install git + nano
 RUN apt install -y git nano
