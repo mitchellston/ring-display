@@ -19,6 +19,11 @@ sudo apt-get update
 # Docker extension install
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 
+cp "$(dirname "$0").env.example" "$(dirname "$0").env"
+
 # Docker post-install
 sudo usermod -aG docker $USER
 newgrp docker
+
+# Export display (display is first screen on host machine from xauth list)
+export DISPLAY=$(echo $DISPLAY | cut -d: -f1)
