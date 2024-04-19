@@ -18,3 +18,7 @@ sudo apt-get update
 
 # Docker extension install
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+
+# Docker post-install
+sudo usermod -aG docker $USER
+newgrp docker
