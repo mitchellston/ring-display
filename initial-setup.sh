@@ -30,6 +30,8 @@ export DISPLAY=$(echo $DISPLAY | cut -d: -f1)
 
 # Disable screensaver (screensaver will turn off the display, which we don't want)
 gsettings set org.gnome.desktop.screensaver idle-activation-enabled false
+# Disable screen blanking (screen blanking will turn off the display, which we don't want)
+gsettings set org.gnome.desktop.session idle-delay 0
 
 # if node is not installed, install it (latest LTS version)
 if ! [ -x "$(command -v node)" ]; then
