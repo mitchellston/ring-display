@@ -1,3 +1,3 @@
 # To add a module simply add the git url and add a name (The module will be auto updated, you can specify a version by adding it after the name (do this to lock a version))
 
-https://github.com/DustinBryant/MMM-Ring.git MMM-ring master
+https://github.com/mitchellston/MMM-Ring.git MMM-ring master
