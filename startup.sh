@@ -1,5 +1,7 @@
 set -euo pipefail
 
+export DISPLAY=":$(xauth list | grep $(hostname) | awk '{print $1}' | cut -d ':' -f 2)"
+
 DOCKER_COMPOSE_PATH=""
 if ! [ -x "$(command -v docker-compose)" ]; then
   if [ -x "$(command -v docker)" ]; then
