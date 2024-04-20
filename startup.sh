@@ -12,7 +12,12 @@ else
   DOCKER_COMPOSE_PATH="$(command -v docker-compose)"
 fi
 
-$(dirname "$0")/update.sh $1
+# Check if &1 exists and pass it to update.sh if it does
+if [ -n "${1-}" ]; then
+  "$(dirname "$0")/update.sh" "$1"
+else
+  "$(dirname "$0")/update.sh"
+fi
 
 # Start docker containers
 (cd "$(dirname "$0")/run" && $DOCKER_COMPOSE_PATH down && sudo $DOCKER_COMPOSE_PATH build && $DOCKER_COMPOSE_PATH up -d)
