@@ -1,1 +1,8 @@
-/opt/magic_mirror/modules/install.sh && npm run start
+# Install the modules
+/opt/magic_mirror/modules/install.sh
+\ 
+# Sleep for 10 seconds to allow the modules to install
+sleep 10
+\ 
+# Start the MagicMirror
+npm run start
