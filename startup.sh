@@ -14,12 +14,8 @@ else
   DOCKER_COMPOSE_PATH="$(command -v docker-compose)"
 fi
 
-# Check if &1 exists and pass it to update.sh if it does
-if [ -n "${1-}" ]; then
-  "$(dirname "$0")/update.sh" "$1"
-else
-  "$(dirname "$0")/update.sh"
-fi
+# Check for updates to the ring-display repo and modules in the mounts/modules directory
+"$(dirname "$0")/update.sh"
 
 # Start docker containers
 (cd "$(dirname "$0")/run" && $DOCKER_COMPOSE_PATH down && sudo $DOCKER_COMPOSE_PATH build && $DOCKER_COMPOSE_PATH up -d)
