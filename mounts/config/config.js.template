@@ -15,18 +15,22 @@ let modules = [
   {
     module: "alert",
   },
-
   {
     module: "MMM-Ring",
     position: "middle_center",
     config: {
       ring2faRefreshToken: "${RING_REFRESH_TOKEN}",
-//      ringStreamMotion: "${RING_STREAM_MOTION}",
-//      ringVideoWidth: "${RING_VIDEO_WIDTH}",
-//      ringMinutesToStreamVideo: ${RING_MINUTES_TO_STREAM}
     },
   }
 ];
+if("${RING_STREAM_MOTION}" == "yes")
+  modules[1]["config"]["ringStreamMotion"] = true;
+if(isNaN("${RING_VIDEO_WIDTH}") == false)
+  modules[1]["config"]["ringStreamMotion"] = "${RING_VIDEO_WIDTH}";
+if(isNaN("${RING_MINUTES_TO_STREAM}"))
+  modules[1]["config"]["ringMinutesToStreamVideo"] = ${RING_MINUTES_TO_STREAM};
+if("${RING_MUTE_VIDEO}" == "yes")
+  modules[1]["config"]["ringMinutesToStreamVideo"] = true;
 
 if ("${CLOCK_ENABLED}" == "yes")
   modules.push({
