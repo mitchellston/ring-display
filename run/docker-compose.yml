@@ -17,7 +17,7 @@ services:
     devices:
       - /dev/vchiq
     environment:
-      DISPLAY: unix$DISPLAY
+      DISPLAY: unix${DISPLAY-:0}
       DBUS_SESSION_BUS_ADDRESS: unix:path=/var/run/dbus/system_bus_socket
     env_file: ../.env
     network_mode: host
