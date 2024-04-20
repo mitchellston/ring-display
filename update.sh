@@ -13,13 +13,17 @@ if ! [ -x "$(command -v docker-compose)" ]; then
 else
     DOCKER_COMPOSE_PATH="$(command -v docker-compose)"
 fi
-# if --dev is passed do not reset and pull the latest changes and check if $1 is bound
-if [ "${1-}" = "--dev" ]; then
+git fetch --all
+# Check if module is in lock file and if it is, check if the origin is the same
+ORIGIN_HASH="$(cd $(dirname "$0") && git rev-parse $(git branch -r --sort=committerdate | tail -1))"
+LOCK_HASH="$(cd $(dirname "$0") && git rev-parse HEAD)"
+if [ "$LOCK_HASH" != "$ORIGIN_HASH" ]; then
+    echo "Version mismatch for ring-display"
     git reset --hard
-    # pull the latest changes from the git repo and if there are any changes, restart the container (if there are no change git pull returns "Already up to date.")
-    if [[ "$(git pull)" != "Already up to date." ]]; then
-        (cd "$(dirname "$0")/run" && $DOCKER_COMPOSE_PATH down && $DOCKER_COMPOSE_PATH build && $DOCKER_COMPOSE_PATH up -d)
-    fi
+    git pull
+    (cd "$(dirname "$0")/run" && $DOCKER_COMPOSE_PATH down && $DOCKER_COMPOSE_PATH build && $DOCKER_COMPOSE_PATH up -d)
+else
+    echo "Version match for $2"
 fi
 
 # Check if there are any changes in the modules
@@ -40,8 +44,12 @@ while read -r module; do
             rm -rf "$(dirname "$0")/mounts/modules/$name"
             CHANGES=true
         else
-            # Check if there are any changes
-            if [ $(cd $(dirname "$0")/mounts/modules/$name && git rev-parse HEAD) != $(cd $(dirname "$0")/mounts/modules/$name && git rev-parse @{u}) ]; then
+            (cd "$(dirname "$0")/mounts/modules/$name" && git fetch --all)
+            # Check if local and origin are the same
+            ORIGIN_HASH="$(cd $(dirname "$0")/mounts/modules/$name && git rev-parse $(git branch -r --sort=committerdate | tail -1))"
+            LOCK_HASH="$(cd $(dirname "$0")/mounts/modules/$name && git rev-parse HEAD)"
+            # Check if there are any changes for the module on the origin
+            if [ "$LOCK_HASH" != "$ORIGIN_HASH" ]; then
                 CHANGES=true
             fi
         fi
