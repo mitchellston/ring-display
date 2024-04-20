@@ -3,7 +3,7 @@
 # Function to checkout a git version
 version_checkout() {
     (cd "$(dirname "$0")/$2" && git fetch --all)
-    # Check if module is in lock file and if it is, check if the origin is the same
+    # Check if local and origin are the same
     ORIGIN_HASH="$(cd $(dirname "$0")/$2 && git rev-parse $(git branch -r --sort=committerdate | tail -1))"
     LOCK_HASH="$(cd $(dirname "$0")/$2 && git rev-parse HEAD)"
     if grep -q $2 $(dirname "$0")/modules.lock; then

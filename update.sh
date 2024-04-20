@@ -14,7 +14,7 @@ else
     DOCKER_COMPOSE_PATH="$(command -v docker-compose)"
 fi
 git fetch --all
-# Check if module is in lock file and if it is, check if the origin is the same
+# Check if local and origin are the same
 ORIGIN_HASH="$(cd $(dirname "$0") && git rev-parse $(git branch -r --sort=committerdate | tail -1))"
 LOCK_HASH="$(cd $(dirname "$0") && git rev-parse HEAD)"
 if [ "$LOCK_HASH" != "$ORIGIN_HASH" ]; then
@@ -23,7 +23,7 @@ if [ "$LOCK_HASH" != "$ORIGIN_HASH" ]; then
     git pull
     (cd "$(dirname "$0")/run" && $DOCKER_COMPOSE_PATH down && $DOCKER_COMPOSE_PATH build && $DOCKER_COMPOSE_PATH up -d)
 else
-    echo "Version match for $2"
+    echo "Version match for ring-display"
 fi
 
 # Check if there are any changes in the modules
