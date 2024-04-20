@@ -11,8 +11,8 @@ if ! [ -x "$(command -v docker-compose)" ]; then
 else
     DOCKER_COMPOSE_PATH="$(command -v docker-compose)"
 fi
-# if --dev is passed do not reset and pull the latest changes
-if [ "$1" != "--dev" ]; then
+# if --dev is passed do not reset and pull the latest changes and check if $1 is bound
+if [ "${1-}" = "--dev" ]; then
     git reset --hard
     # pull the latest changes from the git repo and if there are any changes, restart the container (if there are no change git pull returns "Already up to date.")
     if [[ "$(git pull)" != "Already up to date." ]]; then
