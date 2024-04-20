@@ -6,14 +6,12 @@ version_checkout() {
     # Check if local and origin are the same
     ORIGIN_HASH="$(cd $(dirname "$0")/$2 && git rev-parse $(git branch -r --sort=committerdate | tail -1))"
     LOCK_HASH="$(cd $(dirname "$0")/$2 && git rev-parse HEAD)"
-    if grep -q $2 $(dirname "$0")/modules.lock; then
-        if [ "$LOCK_HASH" != "$ORIGIN_HASH" ]; then
-            echo "Version mismatch for $2"
-            rm -rf $(dirname "$0")/$2
-            (cd "$(dirname "$0")" && git clone $3 $2)
-        else
-            echo "Version match for $2"
-        fi
+    if [ "$LOCK_HASH" != "$ORIGIN_HASH" ]; then
+        echo "Version mismatch for $2"
+        rm -rf $(dirname "$0")/$2
+        (cd "$(dirname "$0")" && git clone $3 $2)
+    else
+        echo "Version match for $2"
     fi
     echo "Origin hash: $ORIGIN_HASH"
     echo "Lock hash: $LOCK_HASH"
