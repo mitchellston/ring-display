@@ -1,11 +1,30 @@
 set -euo pipefail
 
-$(dirname "$0")/helpers/set-docker-alias.sh
+export DISPLAY=":$(xauth list | grep $(hostname) | awk '{print $1}' | cut -d ':' -f 2)"
 
-git reset --soft HEAD~1
-# pull the latest changes from the git repo and if there are any changes, restart the container (if there are no change git pull returns "Already up to date.")
-if [[ "$(git pull)" != "Already up to date." ]]; then
-    (cd "$(dirname "$0")/run" && docker-compose down && docker-compose build && docker-compose up -d)
+DOCKER_COMPOSE_PATH=""
+if ! [ -x "$(command -v docker-compose)" ]; then
+    if [ -x "$(command -v docker)" ]; then
+        DOCKER_COMPOSE_PATH="$(command -v docker) compose"
+    else
+        echo 'Error: docker-compose is not installed and we cannot install it' >&2
+        exit 1
+    fi
+else
+    DOCKER_COMPOSE_PATH="$(command -v docker-compose)"
+fi
+
+git fetch --all
+# Check if local and origin are the same
+ORIGIN_HASH="$(cd $(dirname "$0") && git rev-parse $(git branch -r --sort=committerdate | tail -1))"
+LOCK_HASH="$(cd $(dirname "$0") && git rev-parse HEAD)"
+if [ "$LOCK_HASH" != "$ORIGIN_HASH" ]; then
+    echo "Version mismatch for ring-display"
+    git reset --hard
+    git pull
+    (cd "$(dirname "$0")/run" && $DOCKER_COMPOSE_PATH down && $DOCKER_COMPOSE_PATH build && $DOCKER_COMPOSE_PATH up -d)
+else
+    echo "Version match for ring-display"
 fi
 
 # Check if there are any changes in the modules
@@ -26,8 +45,12 @@ while read -r module; do
             rm -rf "$(dirname "$0")/mounts/modules/$name"
             CHANGES=true
         else
-            # Check if there are any changes
-            if [ $(cd $(dirname "$0")/mounts/modules/$name && git rev-parse HEAD) != $(cd $(dirname "$0")/mounts/modules/$name && git rev-parse @{u}) ]; then
+            (cd "$(dirname "$0")/mounts/modules/$name" && git fetch --all)
+            # Check if local and origin are the same
+            ORIGIN_HASH="$(cd $(dirname "$0")/mounts/modules/$name && git rev-parse $(git branch -r --sort=committerdate | tail -1))"
+            LOCK_HASH="$(cd $(dirname "$0")/mounts/modules/$name && git rev-parse HEAD)"
+            # Check if there are any changes for the module on the origin
+            if [ "$LOCK_HASH" != "$ORIGIN_HASH" ]; then
                 CHANGES=true
             fi
         fi
@@ -39,5 +62,5 @@ done <$(dirname "$0")/mounts/modules/modules
 # If there are changes, update the modules and restart the container
 if [ "$CHANGES" = true ]; then
     echo "There are changes in the modules"
-    (cd "$(dirname "$0")/run" && docker-compose down && docker-compose build && docker-compose up -d)
+    (cd "$(dirname "$0")/run" && $DOCKER_COMPOSE_PATH down && $DOCKER_COMPOSE_PATH build && $DOCKER_COMPOSE_PATH up -d)
 fi

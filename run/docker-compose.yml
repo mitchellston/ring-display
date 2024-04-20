@@ -3,8 +3,8 @@
 services:
   magicmirror:
     container_name: mm
-    build: .
-    # image: karsten13/magicmirror:latest
+    # build: .
+    image: mitchellston/ring-mm-display:latest
     volumes:
       - ../mounts/config:/opt/magic_mirror/config
       - ../mounts/modules:/opt/magic_mirror/modules:rw
@@ -17,10 +17,9 @@ services:
     devices:
       - /dev/vchiq
     environment:
-      DISPLAY: unix$DISPLAY
+      DISPLAY: unix${DISPLAY-:0}
       DBUS_SESSION_BUS_ADDRESS: unix:path=/var/run/dbus/system_bus_socket
-    env_file:
-      ../.env
+    env_file: ../.env
     network_mode: host
     shm_size: "128mb"
     restart: unless-stopped

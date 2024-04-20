@@ -1,13 +1,13 @@
 ARG NODE_VERSION=20
 ARG MAGICMIRROR_VERSION=2.27.0
-ARG BUN_VERSION=1.1.3
 ARG FFMPEG_VERSION=2.1.1
+ARG YARN_VERSION=1.22.22
 
 FROM node:$NODE_VERSION-bookworm 
 
 ARG MAGICMIRROR_VERSION
 ARG FFMPEG_VERSION
-ARG BUN_VERSION
+ARG YARN_VERSION
 
 # install electron dependencies or more if your library has other dependencies
 RUN apt-get update && apt-get install \
@@ -19,7 +19,9 @@ RUN apt-get update && apt-get install \
 RUN apt update && apt install -y curl
 
 # Download and extract ffmpeg
-RUN curl -Lf https://github.com/homebridge/ffmpeg-for-homebridge/releases/download/v${FFMPEG_VERSION}/ffmpeg-alpine-x86_64.tar.gz | tar xzf - -C / --no-same-owner
+# RUN curl -Lf https://github.com/homebridge/ffmpeg-for-homebridge/releases/download/v${FFMPEG_VERSION}/ffmpeg-alpine-x86_64.tar.gz | tar xzf - -C / --no-same-owner
+
+RUN apt-get update && apt-get install -y ffmpeg
 
 # Install git + nano
 RUN apt install -y git nano
@@ -31,8 +33,8 @@ RUN apt-get -y install dbus; \
     dbus-uuidgen > /var/lib/dbus/machine-id; \
     chown -R node: /run/dbus
 
-# Install Bun
-RUN npm install -g bun@1.1.3
+# Install yarn
+RUN npm install -g yarn@${YARN_VERSION} --force
 
 RUN chown -R node: /opt
 
@@ -48,7 +50,7 @@ RUN cd /opt; \
 WORKDIR /opt/magic_mirror
 
 # Setup magic mirror
-RUN bun install
+RUN yarn install
 
 RUN npx electron-rebuild
 
@@ -64,6 +66,7 @@ RUN chmod 777 /opt/magic_mirror/runtime-start.sh
 
 USER node
 
-# ENV DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+RUN export NODE_OPTIONS="--max-old-space-size=500"
+
 
 CMD ["/bin/bash", "-c", "/opt/magic_mirror/runtime-start.sh"]
