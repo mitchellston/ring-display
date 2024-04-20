@@ -12,7 +12,7 @@ else
   DOCKER_COMPOSE_PATH="$(command -v docker-compose)"
 fi
 
-$(dirname "$0")/update.sh
+$(dirname "$0")/update.sh $1
 
 # Start docker containers
 (cd "$(dirname "$0")/run" && $DOCKER_COMPOSE_PATH down && sudo $DOCKER_COMPOSE_PATH build && $DOCKER_COMPOSE_PATH up -d)
