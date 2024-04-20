@@ -13,6 +13,7 @@ if ! [ -x "$(command -v docker-compose)" ]; then
 else
     DOCKER_COMPOSE_PATH="$(command -v docker-compose)"
 fi
+
 git fetch --all
 # Check if local and origin are the same
 ORIGIN_HASH="$(cd $(dirname "$0") && git rev-parse $(git branch -r --sort=committerdate | tail -1))"
