@@ -2,9 +2,25 @@
 
 # Function to checkout a git version
 version_checkout() {
+    (cd "$(dirname "$0")/$2" && git fetch --all)
+    # Check if module is in lock file and if it is, check if the origin is the same
+    ORIGIN_HASH="$(cd $(dirname "$0")/$2 && git rev-parse $(git branch -r --sort=committerdate | tail -1))"
+    LOCK_HASH="$(cd $(dirname "$0")/$2 && git rev-parse HEAD)"
+    if grep -q $2 $(dirname "$0")/modules.lock; then
+        if [ "$LOCK_HASH" != "$ORIGIN_HASH" ]; then
+            echo "Version mismatch for $2"
+            rm -rf $(dirname "$0")/$2
+            (cd "$(dirname "$0")" && git clone $3 $2)
+        else
+            echo "Version match for $2"
+        fi
+    fi
+    echo "Origin hash: $ORIGIN_HASH"
+    echo "Lock hash: $LOCK_HASH"
+
     # Check if the version is specified
     if [ ! -z "$1" ]; then
-        # Checkout the version
+        # Checkout the version and at commit to lock file with the module name
         (cd "$(dirname "$0")/$2" && git checkout $1)
     fi
 }
@@ -25,16 +41,16 @@ while read -r module; do
         # check if the module is the right git repo
         if [ "$(cd $(dirname "$0")/$name && git remote get-url origin)" != "$url" ]; then
             rm -rf "$(dirname "$0")/$name"
-        else
-            rm -rf "$(dirname "$0")/$name"
             # Clone the module into the modules directory
             (cd "$(dirname "$0")" && git clone $url $name)
-            version_checkout $version $name
+            version_checkout $version $name $url
+        else
+            version_checkout $version $name $url
         fi
     else
         # Clone the module into the modules directory
         (cd "$(dirname "$0")" && git clone $url $name)
-        version_checkout $version $name
+        version_checkout $version $name $url
     fi
 done <$(dirname "$0")/modules
 
