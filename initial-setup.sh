@@ -40,6 +40,12 @@ xset s 0
 xset -dpms
 xset q
 
+# add to /etc/rc.local Disable screensaver + export display
+sudo sed -i -e '$i \export DISPLAY=":$(xauth list | grep $(hostname) | awk '\''{print $1}'\'' | cut -d '\''\:'\'' -f 2)"\n' /etc/rc.local
+sudo sed -i -e '$i \xset s 0\n' /etc/rc.local
+sudo sed -i -e '$i \xset -dpms\n' /etc/rc.local
+sudo sed -i -e '$i \xset q\n' /etc/rc.local
+
 # if node is not installed, install it (latest LTS version)
 if ! [ -x "$(command -v node)" ]; then
   # Get the latest LTS version of node
