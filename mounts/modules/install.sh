@@ -9,6 +9,7 @@ version_checkout() {
     if [ "$LOCK_HASH" != "$ORIGIN_HASH" ]; then
         echo "Version mismatch for $2"
         (cd "$(dirname "$0")/$2" && git reset --hard && git pull)
+        (cd "$(dirname "$0")/$2" && yarn install --ignore-scripts)
     else
         echo "Version match for $2"
     fi
@@ -40,6 +41,7 @@ while read -r module; do
             rm -rf "$(dirname "$0")/$name"
             # Clone the module into the modules directory
             (cd "$(dirname "$0")" && git clone $url $name)
+            (cd "$(dirname "$0")/$name" && yarn install --ignore-scripts)
             version_checkout $version $name $url
         else
             version_checkout $version $name $url
@@ -47,6 +49,7 @@ while read -r module; do
     else
         # Clone the module into the modules directory
         (cd "$(dirname "$0")" && git clone $url $name)
+        (cd "$(dirname "$0")/$name" && yarn install --ignore-scripts)
         version_checkout $version $name $url
     fi
 done <$(dirname "$0")/modules
@@ -57,11 +60,4 @@ for module in $(ls $(dirname "$0") | grep -v default | grep -v install.sh | grep
         echo "Removing $module"
         rm -rf $(dirname "$0")/$module
     fi
-done
-
-# Install all the dependencies
-find "$(dirname "$0")" -iname 'package.json' -not -path '*/node_modules/*' -exec dirname {} \; | while IFS= read -r directory; do
-    echo "Installing dependencies for $directory"
-    (cd "$directory" && yarn install --ignore-scripts)
-    echo "Done installing dependencies for $directory"
 done
