@@ -27,7 +27,7 @@ RUN apt-get update && apt-get install -y ffmpeg
 RUN apt install -y git nano
 
 # Screen dependencies
-RUN apt-get update && apt-get install x11-xserver-utils
+RUN apt-get update && apt-get install x11-xserver-utils -y
 
 # Electron deps
 RUN apt-get -y install libgtkextra-dev libgbm-dev libgconf2-dev libnss3 libasound2 libxtst-dev libxss1
