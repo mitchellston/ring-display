@@ -8,8 +8,7 @@ version_checkout() {
     LOCK_HASH="$(cd $(dirname "$0")/$2 && git rev-parse HEAD)"
     if [ "$LOCK_HASH" != "$ORIGIN_HASH" ]; then
         echo "Version mismatch for $2"
-        rm -rf $(dirname "$0")/$2
-        (cd "$(dirname "$0")" && git clone $3 $2)
+        (cd "$(dirname "$0")/$2" && git reset --hard && git pull)
     else
         echo "Version match for $2"
     fi

@@ -26,6 +26,9 @@ RUN apt-get update && apt-get install -y ffmpeg
 # Install git + nano
 RUN apt install -y git nano
 
+# Screen dependencies
+RUN apt-get update && apt-get install x11-xserver-utils
+
 # Electron deps
 RUN apt-get -y install libgtkextra-dev libgbm-dev libgconf2-dev libnss3 libasound2 libxtst-dev libxss1
 
@@ -67,6 +70,5 @@ RUN chmod 777 /opt/magic_mirror/runtime-start.sh
 USER node
 
 RUN export NODE_OPTIONS="--max-old-space-size=500"
-
 
 CMD ["/bin/bash", "-c", "/opt/magic_mirror/runtime-start.sh"]
